@@ -123,7 +123,7 @@ Download the script by right-clicking [here](https://raw.githubusercontent.com/h
     Core #18: Average=1097.16  vs Baseline:  61.95%
     Core #19: Average=1096.33  vs Baseline:  61.90%
 
-This was run on an i7-12700h, comparing the performance of the six performance cores to the eight efficiency cores. Notice how cores #3 and #4 are the fastest - these represent the "favored cores" on this particular CPU die (see [Intel Turbo Boost Max Technology 3.0](https://www.tomshardware.com/reference/intel-favored-cpu-cores-turbo-boost-max-technology-3.0))
+This was run on an i7-12700h, comparing the performance of the six performance cores to the eight efficiency cores. Notice how cores #4 and #5 are the fastest - these represent the "favored cores" on this particular CPU die (see [Intel Turbo Boost Max Technology 3.0](https://www.tomshardware.com/reference/intel-favored-cpu-cores-turbo-boost-max-technology-3.0))
 	
 ### Command Line Options
     -c <a-b, x, y>- List of cores #'s to test, x-y range or indiviudal values
