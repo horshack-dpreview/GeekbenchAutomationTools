@@ -131,9 +131,9 @@ outputFilename=""
 quiet=0
 
 showHelp() {
-    echo "Command-line arguments:"
-    echo "-r <count>    - Geekbench run count"
+    echo "Command line options:"
     echo "-e <path>     - Path to Geekbench executable";
+    echo "-r <count>    - Geekbench run count"
     echo "-o <filename> - Output a copy of the results to specified file"
     echo "-q            - Quiet. Don't display anything except for result"
     echo "-h            - This help display"
@@ -166,7 +166,7 @@ fi
 #
 # run Geekbench
 #
-[[ $quiet -eq 0 ]] && echo "Running Geekbench ${geekbenchRunCount} times..."
+[[ $quiet -eq 0 ]] && echo "Running Geekbench ${geekbenchRunCount} time(s)..."
 Geekbench_Run_N_Times $quiet $geekbenchRunCount
 # process results
 Geekbench_Results_Str_From_Array "${retVal_1[@]}"; single_core_results_str="$retVal"

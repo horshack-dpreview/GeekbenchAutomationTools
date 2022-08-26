@@ -229,9 +229,11 @@ geekbenchRunCount=3
 coresToTestRangeStr=""
 
 showHelp() {
+    echo "Command line options:"
     echo "-c <a-b, x, y>- List of cores #'s to test, x-y range or indiviudal values"  
     echo "-e <path>     - Path to geekbench executable";
     echo "-r <count>    - Geekbench run count per core"
+    echo "-h            - This help display"
     exit 
 }
 while getopts "h?r:c:e:" opt; do
@@ -324,7 +326,7 @@ for core in "${coresToTestList[@]}"; do
     Geekbench_Results_Str_From_Array "${retVal_1[@]}"; single_core_results_str="$retVal"
     Geekbench_Results_Str_From_Array "${retVal_2[@]}"; multi_core_results_str="$retVal"
 
-    echo "Single-core: rverage=${singleCoreAverage}, each run: ${single_core_results_str}"
+    echo "Single-core: Average=${singleCoreAverage}, each run: ${single_core_results_str}"
     echo " Multi-core: Average=${multiCoreAverage}, each run: ${multi_core_results_str}"
     echo "       Both: Average=${singleMultiCoreAverage}"
 
@@ -344,12 +346,12 @@ echo "-----------------------------------------------"
 
 for (( coreIndex=0; coreIndex<$countCoresToTest; coreIndex++ )); do
     core=${coresToTestList[$coreIndex]};
-    averagePctRelativeToBaseline=$(echo "scale=4; ${resultsPerCore[$coreIndex]} / ${resultsPerCore[0]} * 100" | bc -l)
-    averagePctRelativeToBaseline=${averagePctRelativeToBaseline%??}
     printf "Core #%2d: Average=%-8s " "$core" "${resultsPerCore[$coreIndex]}"
     if [ $coreIndex -eq 0 ]; then
         printf "*** Baseline ***\n"
     else
+        averagePctRelativeToBaseline=$(echo "scale=4; ${resultsPerCore[$coreIndex]} / ${resultsPerCore[0]} * 100" | bc -l)
+        averagePctRelativeToBaseline=${averagePctRelativeToBaseline%??}
         printf "vs Baseline: %6s%%\n" "$averagePctRelativeToBaseline"
     fi
 done
