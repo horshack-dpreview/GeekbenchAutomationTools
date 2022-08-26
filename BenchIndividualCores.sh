@@ -291,11 +291,12 @@ resultsPerCore=() # array of results for each core - contains average of all Gee
 
 for core in "${coresToTestList[@]}"; do
 
+    echo
+    echo "Testing Core $core"
+
     #
     # enable the next core
     #
-    echo
-    echo "Testing Core $core"
     isolatedCoreEnable $core $countCores
 
     #
@@ -331,7 +332,7 @@ for core in "${coresToTestList[@]}"; do
     echo "       Both: Average=${singleMultiCoreAverage}"
 
     if [ ${singleMultiAverageGap%.*} -gt 15 ]; then
-        echo "    Warning: Gap between single and multi-core results is ${singleMultiAverageGap}%, implying this script isn't correctly isolating a single core"
+        echo "    Warning: Gap between single and multi-core results is ${singleMultiAverageGap}%, implying this script isn't correctly isolating each core"
     fi
 
 done
