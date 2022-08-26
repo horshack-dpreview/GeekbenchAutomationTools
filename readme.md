@@ -1,34 +1,38 @@
 
 
+
 # Geekbench Automation Tools
 Scripts for automating the execution and results collection from the command-line version of Geekbench (linux) 
 
-## Installation
-Download the GeekbenchRun script by right-clicking [here](https://raw.githubusercontent.com/horshack-dpreview/GeekbenchAutomationTools/main/GeekbenchRun.sh) and make it executable via "chmod +x GeekbenchRun.sh". 
+## GeekbenchRun
+The free version of Geekbench supports command-line execution but not the automated collection of results - that requires the paid version. The free version instead uploads its results to Primate Lab's site (Geekbench developer) and provides an invocation-specific URL to view them. This script runs Geekbench, extracts the resulting URL, downloads the content from that URL, then parses and reports the single and multi-core results.
 
-A separate script named BenchIndividualCores lets you benchmark each core separately - to install it, right-click [here](https://raw.githubusercontent.com/horshack-dpreview/GeekbenchAutomationTools/main/BenchIndividualCores.sh) and do "chmod +x BenchIndividualCores.sh". Place it in the same directory as `GeekbenchRun.sh`
+This script can run both as a stand-alone utility, or can be included via `source` to access the functionality from your own script - this is demonstrated in `BenchIndividualCores.sh`.
 
-### GeekbenchRun
-The free version of Geekbench supports command-line execution but not the automated collection of results - that requires the paid version. The free version instead uploads its results to Primate Lab's site (Geekbench developer) and provides a invocation-specific URL to view them. This script runs Geekbench, extracts the resulting URL, downloads the content from that URL, then parses and reports the single and multi-core results. This script can run both as a stand-alone utility, or can be included via `source` to access the functionality from your own script - this is demonstrated in `BenchIndividualCores.sh`.
+### Installation
+Download the script by right-clicking [here](https://raw.githubusercontent.com/horshack-dpreview/GeekbenchAutomationTools/main/GeekbenchRun.sh) and make it executable via "chmod +x GeekbenchRun.sh". 
 
-#### Sample Output
+### Sample Output
     $ ./GeekbenchRun.sh -q -o -
     Single-core, 1811
     Multi-core, 7909
 
-#### Command Line Options
+### Command Line Options
     -e <path>     - Path to Geekbench executable
     -r <count>    - Geekbench run count (default is 1)
     -o <filename> - Output a copy of the results to specified file. Use -o - to output to stdout
     -q            - Quiet - don't output anything to console. If you use this option then use -o to write results to a file or stdout.
     -h            - This help display
 
-### BenchIndividualCores
+## BenchIndividualCores
 Measures the relative performance of individual processor cores by selectively enabling cores and running Geekbench against each. The /sys/devices/system/cpu/cpu\<x\>\online interface is used to enable/disable cores. You'll need to use a kernel (and processor) that supports hot-plugging cores. You'll also need to enable support for hot-plugging of core #0, which is disabled by default. This is done by specifying the`cpu0_hotplug` kernel boot option in GRUB. This script must be run with root privileges to have access to enable/disable CPU cores.
 
 You can specify which cores are tested via the `-c` option, using any combination of ranges or individual values. For example, `-c 0-2 12,15-18` will measure performance on cores 0, 1, 2, 12, 15, 16, 17, and 18.
 
-#### Sample Output
+### Installation
+Download the script by right-clicking [here](https://raw.githubusercontent.com/horshack-dpreview/GeekbenchAutomationTools/main/BenchIndividualCores.sh) and make it executable via "chmod +x BenchIndividualCores.sh". This script relies on GeekbenchRun.sh, which should be placed in the same directory.
+
+### Sample Output
     $ sudo ./BenchIndividualCores.sh -c 0-5,12-19 -e ./geekbench5
     Found 20 CPU cores, testing  14 cores [0-5,12-19]
 
@@ -119,11 +123,12 @@ You can specify which cores are tested via the `-c` option, using any combinatio
     Core #18: Average=1097.16  vs Baseline:  61.95%
     Core #19: Average=1096.33  vs Baseline:  61.90%
 
-This was run on an i7-12700h, comparing the performance of the six performance cores to to the eight efficiency cores. Notice how cores #3 and #4 are the fastest - these represent the "favored cores" on this particular CPU die (see [Intel Turbo Boost 3.0 Technology](https://www.tomshardware.com/reference/intel-favored-cpu-cores-turbo-boost-max-technology-3.0))
+This was run on an i7-12700h, comparing the performance of the six performance cores to the eight efficiency cores. Notice how cores #3 and #4 are the fastest - these represent the "favored cores" on this particular CPU die (see [Intel Turbo Boost Max Technology 3.0](https://www.tomshardware.com/reference/intel-favored-cpu-cores-turbo-boost-max-technology-3.0))
 	
-#### Command Line Options
+### Command Line Options
     -c <a-b, x, y>- List of cores #'s to test, x-y range or indiviudal values
     -e <path>     - Path to geekbench executable
     -r <count>    - Geekbench run count per core (default is 3)
     -h            - This help display
+Note that because we execute Geekbench with only a single core enabled, both the single and multi-core results from each Geekbench run are effectively single-core tests. Because of this, the number of usable test samples for the "average" calculation is 2x the `-r` run count.
 
