@@ -27,7 +27,7 @@ Download the script by right-clicking [here](https://raw.githubusercontent.com/h
 ## BenchIndividualCores
 Measures the relative performance of individual processor cores by selectively enabling cores and running Geekbench against each. The /sys/devices/system/cpu/cpu\<x\>\online interface is used to enable/disable cores. You'll need to use a kernel (and processor) that supports hot-plugging cores. You'll also need to enable support for hot-plugging of core #0, which is disabled by default. This is done by specifying the`cpu0_hotplug` kernel boot option in GRUB. This script must be run with root privileges to have access to enable/disable CPU cores.
 
-You can specify which cores are tested via the `-c` option, using any combination of ranges or individual values. For example, `-c 0-2 12,15-18` will measure performance on cores 0, 1, 2, 12, 15, 16, 17, and 18.
+You can specify which cores are tested via the `-c` option, using any combination of ranges or individual values. For example, `-c 0-2,12,15-18` will measure performance on cores 0, 1, 2, 12, 15, 16, 17, and 18.
 
 ### Installation
 Download the script by right-clicking [here](https://raw.githubusercontent.com/horshack-dpreview/GeekbenchAutomationTools/main/BenchIndividualCores.sh) and make it executable via "chmod +x BenchIndividualCores.sh". This script relies on GeekbenchRun.sh, which should be placed in the same directory.
@@ -130,5 +130,5 @@ This was run on an i7-12700h, comparing the performance of the six performance c
     -e <path>     - Path to geekbench executable
     -r <count>    - Geekbench run count per core (default is 3)
     -h            - This help display
-Note that because we execute Geekbench with only a single core enabled, both the single and multi-core results from each Geekbench run are effectively single-core tests. Because of this, the number of usable test samples for the "average" calculation is 2x the `-r` run count.
+Note that because we execute Geekbench with only a single core enabled, both the single and multi-core results from each Geekbench run are effectively single-core tests. Because of this, the number of usable test samples for calculated average is 2x the `-r` run count.
 
