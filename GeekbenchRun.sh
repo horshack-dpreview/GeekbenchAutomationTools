@@ -26,8 +26,7 @@
 #
 Geekbench_Run() {
 
-    local quiet
-    quiet=$1
+    local quiet=$1
 
     # execute Geekbench
     if [ $quiet -eq 0 ]; then
@@ -79,11 +78,8 @@ Geekbench_Run() {
 #
 Geekbench_Run_N_Times() {
 
-    local quiet
-    local iterations
-
-    quiet=$1
-    iterations=$2
+    local quiet=$1
+    local iterations=$2
 
     single_core_results=()
     multi_core_results=()
@@ -106,8 +102,7 @@ Geekbench_Run_N_Times() {
 #   retVal - String containing comma-separated list of values from array
 #
 Geekbench_Results_Str_From_Array() {
-    local theArray
-    theArray=("$@")
+    local theArray=("$@")
     printf -v retVal "%s," "${theArray[@]}"
     retVal=${retVal%,}
 
@@ -149,6 +144,13 @@ while getopts "h?qr:o:e:" opt; do
   esac
 done
 shift $((OPTIND-1))
+
+if [[ $# -ne 0 ]]; then
+    # found positional arguments after option arguments
+    echo "Count: $#"
+    echo "Error: Unknown argument(s) \"$@\" specified"
+    exit 1
+fi
 
 #
 # make sure we have the right path to the Geekbench executable

@@ -24,8 +24,7 @@ Geekbench_Executable="/home/user/.local/bin/Geekbench-5.4.4-Linux/geekbench5"
 #   retVal = Number of cores 
 #
 getCoreCount() {
-    coreCount=$(lscpu | grep "^CPU(s):"  | sed -nE "s/CPU\(s\):\s*([0-9]+)/\1/p")
-    if [ $? -ne 0 ]; then
+    if ! coreCount=$(lscpu | grep "^CPU(s):"  | sed -nE "s/CPU\(s\):\s*([0-9]+)/\1/p"); then
         echo "Error obtaining core count from lscpu"
         exit 1
     fi
@@ -44,19 +43,11 @@ getCoreCount() {
 #   retVal - Average of numbers in array
 #
 calcArrayAverage() {
-
-    local theArray
-    local sum
-    local valFromArray 
-
-    theArray=("$@")
-    sum=0
-    for valFromArray in "${theArray[@]}"; do
-        sum=$(echo "$sum + $valFromArray" | bc -l)
-    done
-    retVal=$(echo "scale=2; $sum / ${#theArray[@]}" | bc -l)
+    local theArray=("$@")
+    local average 
+    local oldIFS="$IFS"; IFS=+; average=$(echo "scale=2; (${theArray[*]}) / ${#theArray[@]}" | bc -l); IFS="$oldIFS"
+    retVal=$average
 }
-
 
 #
 # Calculates how close two numbers are difference-wise
@@ -69,18 +60,14 @@ calcArrayAverage() {
 #
 calcPctDiffGap() {
 
-    local num1
-    local num2
-
-    num1=$1
-    num2=$2
+    local num1=$1
+    local num2=$2
 
     strDiff=$(echo "scale=2; ($num1-$num2) / (($num1+$num2)/2) * 100" | bc -l)
     strDiff="${strDiff%.*}" # remove decimal portion of value
     strDiff="${strDiff#-*}" # remove any leading -1 (ie, do abs of value)
     retVal="$strDiff"
 }
-
 
 #
 # Enables all CPU cores
@@ -90,10 +77,8 @@ calcPctDiffGap() {
 #
 enableAllCores() {
 
-    local countCoresManaged
-
-    countCoresManaged=$1
-    dontReportErrors=$2
+    local countCoresManaged=$1
+    local dontReportErrors=$2
 
     #
     # note we use BASH brace expansion to specify range of cores. Brace expansion
@@ -123,13 +108,10 @@ enableAllCores() {
 #
 isolatedCoreEnable() {
 
-    local coreToEnable
-    local countCoresManaged; 
+    local coreToEnable=$1
+    local countCoresManaged=$2; 
     local core
     
-    coreToEnable=$1
-    countCoresManaged=$2
-
     #
     # first enable all cores, to prevent a situation where we disable all cores in the system.
     #
@@ -171,12 +153,11 @@ trap_SIGINT() {
 #
 genNumberListFromRangeStr() {
 
+    local rangeStr=$1
     local oldIFS
-    local rangeStr
     local val
 
     # build an array containing each comma-separated value/value range
-    rangeStr=$1
     oldIFS="$IFS"; IFS=,; rangeStrAsArray=($rangeStr); IFS="$oldIFS"
 
     # build array of values by parsing each value/value range
@@ -245,6 +226,12 @@ while getopts "h?r:c:e:" opt; do
   esac
 done
 shift $((OPTIND-1))
+
+if [[ $# -ne 0 ]]; then
+    # found positional arguments after option arguments
+    echo "Error: Unknown argument(s) \"$@\" specified"
+    exit 1
+fi
 
 if [ -z "$coresToTestRangeStr" ]; then
     # no core list specified - use all cores 
